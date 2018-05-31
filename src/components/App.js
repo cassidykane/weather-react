@@ -3,6 +3,7 @@ import './App.css';
 import ZipForm from './ZipForm';
 import get from 'axios';
 import WeatherList from './WeatherList';
+import CurrentDay from './CurrentDay';
 
 class App extends Component {
   constructor(props) {
@@ -11,12 +12,13 @@ class App extends Component {
       zipcode: "",
       city: {},
       dates: [],
-      selectedDate: null
+      selectedDate: null,
     };
     this.url = "http://api.openweathermap.org/data/2.5/forecast/daily?zip=";
     this.apikey = "&units=imperial&appid=c59493e7a8643f49446baf0d5ed9d646";
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.onDayClick = this.onDayClick.bind(this);
   }
 
   onFormSubmit(zipcode) {
@@ -28,14 +30,21 @@ class App extends Component {
     .catch(error => {
       alert(error);
     });
-    //this.setState( {zipcode} ); //or {zipcode: zipcode}
+  }
+
+  onDayClick(index) {
+    this.setState({selectedDate: this.state.dates[index]});
   }
 
   render() {
     return (
       <div className="App">
         <ZipForm onSubmit={this.onFormSubmit}/>
-        <WeatherList days={this.state.dates}/>
+        <WeatherList days={this.state.dates} dayClick={this.onDayClick}/>
+        {this.state.selectedDate ? 
+          <CurrentDay day={this.state.selectedDate} city={this.state.city} /> :
+          null
+        }
       </div>
     );
   }
